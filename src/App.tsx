@@ -1,7 +1,8 @@
 import ApolloClient from "apollo-boost";
 import * as React from 'react';
 import { ApolloProvider } from "react-apollo";
-import { ExchangeRates } from "./Query";
+import { Issues } from "./Issues";
+import { Labels } from "./Labels";
 
 import './App.css';
 import logo from './logo.svg';
@@ -22,12 +23,12 @@ class App extends React.Component {
     return (
       <ApolloProvider client={client}>
         <div className="App">
-          <h2>My first Apollo app 🚀</h2>
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <h1 className="App-title">Welcome to React</h1>
           </header>
-          <ExchangeRates />
+          <Labels />
+          <Issues />
         </div>
       </ApolloProvider>
     );

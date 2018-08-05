@@ -7,35 +7,29 @@ interface IEdge {
 }
 
 interface INode {
-  title: string;
+  name: string;
   id: string;
   url: string;
-  author: IActor;
 }
 
-interface IActor {
-  avatarUrl: string
-}
-
-const style = {
-  height: "32px",
-  width: "32px",
-}
-
-export const ExchangeRates: React.SFC = () => (
+export const Labels: React.SFC = () => (
   <Query
     query={gql`
       {
         repository(owner: "quipper", name: "quipper") {
-          issues(last: 50) {
+          labels(last: 50) {
+            totalCount
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+              endCursor
+              startCursor
+            }
             edges {
               node {
-                title
+                name
                 id
                 url
-                author {
-                  avatarUrl
-                }
               }
             }
           }
@@ -47,15 +41,12 @@ export const ExchangeRates: React.SFC = () => (
       if (loading) { return <p>Loading...</p>; }
       if (error) { return <p>Error :(</p>; }
 
-      // tslint:disable-next-line:no-console
-      console.log(data)
       const onClick = () => refetch()
       return <>
         <button onClick={onClick}>Refetch!</button>
-        {data.repository.issues.edges.map((edge: IEdge) => (
+        {data.repository.labels.edges.map((edge: IEdge) => (
           <div key={edge.node.id}>
-            <img style={style} src={edge.node.author.avatarUrl} />
-            <a href={edge.node.url}>{edge.node.title}</a>
+            <a href={edge.node.url}>{edge.node.name}</a>
           </div>
         ))}
       </>

@@ -6,8 +6,15 @@ import { ExchangeRates } from "./Query";
 import './App.css';
 import logo from './logo.svg';
 
+const token = process.env.GITHUB_TOKEN;
+if (!token) {
+  throw new Error('set GITHUB_TOKEN in your .env file');
+}
 const client = new ApolloClient({
-  uri: "https://w5xlvm3vzz.lp.gql.zone/graphql"
+  headers: {
+    Authorization: `bearer ${token}`
+  },
+  uri: "https://api.github.com/graphql",
 });
 
 class App extends React.Component {
@@ -20,10 +27,7 @@ class App extends React.Component {
             <img src={logo} className="App-logo" alt="logo" />
             <h1 className="App-title">Welcome to React</h1>
           </header>
-          <p className="App-intro">
-            To get started, edit <code>src/App.tsx</code> and save to reload.
-          </p>
-        <ExchangeRates />
+          <ExchangeRates />
         </div>
       </ApolloProvider>
     );

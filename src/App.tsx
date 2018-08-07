@@ -1,7 +1,7 @@
 import ApolloClient from "apollo-boost";
 import * as React from 'react';
 import { ApolloProvider } from "react-apollo";
-import { Issues } from "./Issues";
+import Issues from "./Issues";
 import { Labels } from "./Labels";
 
 import './App.css';

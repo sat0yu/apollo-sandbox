@@ -1,6 +1,7 @@
 import ApolloClient from "apollo-boost";
 import * as React from 'react';
 import { ApolloProvider } from "react-apollo";
+import { Graph } from 'react-d3-graph';
 import Issues from "./Issues";
 import { Labels } from "./Labels";
 
@@ -18,6 +19,11 @@ const client = new ApolloClient({
   uri: "https://api.github.com/graphql",
 });
 
+const data = {
+  links: [{ source: 'Harry', target: 'Sally' }, { source: 'Harry', target: 'Alice' }],
+  nodes: [{ id: 'Harry' }, { id: 'Sally' }, { id: 'Alice' }],
+};
+
 class App extends React.Component {
   public render() {
     return (
@@ -29,6 +35,10 @@ class App extends React.Component {
           </header>
           <Labels />
           <Issues />
+          <Graph
+            id={"issue-graph"}
+            data={data}
+          />
         </div>
       </ApolloProvider>
     );

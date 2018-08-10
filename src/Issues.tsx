@@ -2,9 +2,11 @@ import gql from "graphql-tag";
 import { isNil } from "lodash-es";
 import * as React from 'react';
 import { ChildDataProps, graphql } from "react-apollo";
+import { Graph } from 'react-d3-graph';
 
 interface IActor {
-  avatarUrl: string
+  avatarUrl: string;
+  login: string;
 }
 
 interface INode {
@@ -53,6 +55,7 @@ const ISSUE_QUERY = gql(`
             id
             url
             author {
+              login
               avatarUrl
             }
           }
@@ -68,6 +71,23 @@ class Issues extends React.Component<Props, object> {
     super(props);
     this.refetch = this.refetch.bind(this);
   }
+
+  get data() {
+    const {repository}  = this.props.data
+    if(isNil(repository)) { return {links: [], nodes: []} }
+    const edges = repository.issues.edges;
+    const nodes = edges.reduce((acc, e) => [
+      ...acc,
+      {id: e.node.title, color: 'blue'},
+      {id: e.node.author.login, color: 'red'}
+    ], [])
+    const links = edges.reduce((acc, e) => [
+      ...acc,
+      {source: e.node.author.login, target: e.node.title}
+    ], []);
+    return {links, nodes,}
+  };
+
 
   public render() {
     if(isNil(this.props.data)){ return null }
@@ -86,6 +106,10 @@ class Issues extends React.Component<Props, object> {
               <a href={edge.node.url}>{edge.node.title}</a>
             </div>
           ))}
+          <Graph
+            id={"issue-graph"}
+            data={this.data}
+          />
         </>
   }
 

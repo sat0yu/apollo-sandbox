@@ -85,14 +85,27 @@ class Issues extends React.Component<Props, object> {
     const {repository}  = this.props.data
     if(isNil(repository)) { return {links: [], nodes: []} }
     const edges = repository.issues.edges;
-    const nodes = edges.reduce((acc, e) => [
-      ...acc,
-      {id: e.node.title, color: 'blue'},
-      {id: e.node.author.login, color: 'red'}
-    ], [])
-    const links = edges.reduce((acc, e) => [
-      ...acc,
-      {source: e.node.author.login, target: e.node.title}
+    const nodes = [
+      ...edges.reduce((iacc, ie) => [
+        ...iacc,
+        {id: ie.node.title, color: 'blue'},
+        ...ie.node.participants.edges.reduce((uacc, ue) => [
+          ...uacc,
+          {id: ue.node.login, color: 'red'}
+        ], []),
+      ], []),
+      ...edges.reduce((acc, e) => [
+        ...acc,
+        {id: e.node.author.login, color: 'red'},
+      ], []),
+    ]
+    const links = edges.reduce((iacc, ie) => [
+      ...iacc,
+      {source: ie.node.author.login, target: ie.node.title, color: 'red'},
+      ...ie.node.participants.edges.reduce((uacc, ue) => [
+        ...uacc,
+        {target: ue.node.login, source: ie.node.title}
+      ], []),
     ], []);
     return {links, nodes,}
   };

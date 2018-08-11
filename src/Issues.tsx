@@ -4,29 +4,30 @@ import * as React from 'react';
 import { ChildDataProps, graphql } from "react-apollo";
 import { Graph } from 'react-d3-graph';
 
-interface IActor {
+interface IUser {
   avatarUrl: string;
   login: string;
 }
 
-interface INode {
+interface IIssue {
   title: string;
   id: string;
   url: string;
-  author: IActor;
+  author: IUser;
+  participants: IConnection<IUser>;
 }
 
-interface IEdge {
+interface IEdge<T> {
   cursor?: string;
-  node: INode;
+  node: T;
 }
 
-interface IIssues {
-  edges: IEdge[];
+interface IConnection<T> {
+  edges: Array<IEdge<T>>;
 }
 
 interface IRepositoty {
-  issues: IIssues;
+  issues: IConnection<IIssue>;
 }
 
 interface IResponse {
@@ -57,6 +58,14 @@ const ISSUE_QUERY = gql(`
             author {
               login
               avatarUrl
+            }
+            participants(first: 50) {
+              edges {
+                node {
+                  avatarUrl
+                  login
+                }
+              }
             }
           }
         }
@@ -100,7 +109,7 @@ class Issues extends React.Component<Props, object> {
       ? null
       : <>
           <button onClick={this.refetch}>Refetch!</button>
-          {repository.issues.edges.map((edge: IEdge) => (
+          {repository.issues.edges.map((edge) => (
             <div key={edge.node.id}>
               <img style={style} src={edge.node.author.avatarUrl} />
               <a href={edge.node.url}>{edge.node.title}</a>
